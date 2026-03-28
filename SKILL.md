@@ -63,7 +63,7 @@ All other entity creation and mutation must be done through the web portal or ag
 
 2. **Search** when you need specific knowledge:
    ```bash
-   internode search "deployment pipeline" --top-k 5
+   internode search "deployment pipeline"
    ```
 
 3. **Browse** entity lists to find what you need:
@@ -104,7 +104,7 @@ All other entity creation and mutation must be done through the web portal or ag
 internode context [--max-tokens N]
 # Full OI context dump for LLM consumption. Use --max-tokens to budget.
 
-internode search "<query>" [--top-k N] [--min-score 0.0-1.0]
+internode search "<query>"
 # Semantic search across all entity types.
 
 internode entity get <id1> [<id2> ... <idN>]
