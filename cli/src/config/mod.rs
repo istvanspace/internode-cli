@@ -14,7 +14,7 @@ pub struct Config {
 }
 
 fn default_api_url() -> String {
-    "https://api.internode.ai".to_string()
+    "https://agents.api.internode.ai/".to_string()
 }
 
 impl Default for Config {
