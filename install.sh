@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-REPO="internodelabs/internode-cli"
+REPO="istvanspace/internode-cli"
 BINARY="internode"
 INSTALL_DIR="${HOME}/.local/bin"
 
