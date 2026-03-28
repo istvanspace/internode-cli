@@ -31,51 +31,121 @@ enum Commands {
         api_url: Option<String>,
     },
     /// Authentication commands
+    #[command(
+        after_help = "Examples:
+  internode auth status"
+    )]
     Auth {
         #[command(subcommand)]
         command: AuthCmd,
     },
     /// Browse OI topics
+    #[command(
+        after_help = "Examples:
+  internode topics list
+  internode topics list --category 3 --search \"deployment\" --limit 20 --offset 0
+
+Tip:
+  Run 'internode topics list --help' for full filter details."
+    )]
     Topics {
         #[command(subcommand)]
         command: TopicsCmd,
     },
     /// Browse OI sub-topics (Ideas, Problems, Solutions, etc.)
+    #[command(
+        after_help = "Examples:
+  internode subtopics list
+  internode subtopics list --type Idea --topic <topic_id> --limit 10
+
+Tip:
+  Run 'internode subtopics list --help' for full filter details."
+    )]
     Subtopics {
         #[command(subcommand)]
         command: SubtopicsCmd,
     },
     /// Browse and update OI tasks
+    #[command(
+        after_help = "Examples:
+  internode tasks list
+  internode tasks list --team <team_id> --status \"In Progress\" --priority high
+  internode tasks update <id> --status <status_id> --assignee \"user@example.com\"
+
+Tips:
+  Run 'internode tasks list --help' for list filters.
+  Run 'internode tasks update --help' for mutation fields."
+    )]
     Tasks {
         #[command(subcommand)]
         command: TasksCmd,
     },
     /// Browse OI decisions
+    #[command(
+        after_help = "Examples:
+  internode decisions list
+  internode decisions list --search \"pricing model\" --limit 10"
+    )]
     Decisions {
         #[command(subcommand)]
         command: DecisionsCmd,
     },
     /// Browse OI intents
+    #[command(
+        after_help = "Examples:
+  internode intents list
+  internode intents list --limit 50 --offset 0"
+    )]
     Intents {
         #[command(subcommand)]
         command: IntentsCmd,
     },
     /// Retrieve detailed entity information (knowledge molecules)
+    #[command(
+        after_help = "Examples:
+  internode entity get oitask_123
+  internode entity get oitask_123 oidecision_456 oitopicv_789
+
+Notes:
+  Use one or more entity IDs (max 20).
+  Do not pass bracket syntax like ['id']; pass raw IDs as arguments.
+
+Tip:
+  Run 'internode entity get --help' for ID argument details."
+    )]
     Entity {
         #[command(subcommand)]
         command: EntityCmd,
     },
     /// Browse OI teams
+    #[command(
+        after_help = "Examples:
+  internode teams list"
+    )]
     Teams {
         #[command(subcommand)]
         command: TeamsCmd,
     },
     /// Browse and create OI projects
+    #[command(
+        after_help = "Examples:
+  internode projects list
+  internode projects list --team <team_id>
+  internode projects create --name \"v2\" --team <team_id> --key PRJ --description \"Version 2\"
+
+Tip:
+  Run 'internode projects create --help' for create arguments."
+    )]
     Projects {
         #[command(subcommand)]
         command: ProjectsCmd,
     },
     /// Browse OI statuses
+    #[command(
+        after_help = "Examples:
+  internode statuses list
+  internode statuses list --team <team_id>"
+    )]
     Statuses {
         #[command(subcommand)]
         command: StatusesCmd,
@@ -84,12 +154,6 @@ enum Commands {
     Search {
         /// Search query text
         query: String,
-        /// Number of results to return
-        #[arg(long = "top-k")]
-        top_k: Option<i64>,
-        /// Minimum similarity score (0.0 to 1.0)
-        #[arg(long = "min-score")]
-        min_score: Option<f64>,
     },
     /// Dump structural OI context optimized for LLM consumption
     Context {
@@ -330,8 +394,8 @@ async fn run(cli: Cli) -> Result<(), CliError> {
         Commands::Statuses { command } => match command {
             StatusesCmd::List { team } => commands::statuses::list(team.as_deref()).await,
         },
-        Commands::Search { query, top_k, min_score } => {
-            commands::search::search(&query, top_k, min_score).await
+        Commands::Search { query } => {
+            commands::search::search(&query).await
         }
         Commands::Context { max_tokens } => {
             commands::context::context(max_tokens).await
