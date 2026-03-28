@@ -17,7 +17,7 @@ User Machine                    Hosted Services
 ```
 
 - No gateway or proxy needed
-- CLI talks directly to `api.internode.ai`
+- CLI talks directly to `agents.api.internode.ai`
 - Per-user API key authentication (no shared secrets on client)
 
 ## Install

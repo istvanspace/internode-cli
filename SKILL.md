@@ -7,39 +7,22 @@ description: Interface with Internode Organizational Intelligence (OI) via the i
 
 The `internode` CLI is your interface to a user's **Organizational Intelligence (OI)** — a persistent knowledge graph of topics, sub-topics, tasks, decisions, intents, teams, projects, and statuses. Use it as long-term memory: read context before starting work, browse entities, update task properties, and search the knowledge graph.
 
-## Running the CLI (Docker)
-
-The CLI runs inside a Docker container. To use it, you **must** execute commands inside the container — not on the host.
-
-**Starting the container** (if not already running):
-
-```bash
-./internode-cli/docker-up.sh
-```
-
-This builds the image and drops into an interactive shell. If the container is already running (check with `docker ps --filter name=internode-cli`), exec into it instead:
-
-```bash
-docker exec -it internode-cli bash
-```
-
-**All `internode` commands below must be run inside this container shell.** When scripting from the host, prefix with `docker exec`:
-
-```bash
-docker exec internode-cli internode topics list
-docker exec internode-cli internode search "deployment"
-```
-
 ## Prerequisites
 
-The CLI must be configured with an API key before use. **Run these inside the container:**
+Install the CLI if you haven't already:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/internodelabs/internode-cli/main/install.sh | sh
+```
+
+Configure with an API key before first use:
 
 ```bash
 internode configure <api-key>   # one-time setup; key starts with ink_
 internode auth status            # verify the key works
 ```
 
-Config lives at `~/.config/internode/config.toml` inside the container.
+Config lives at `~/.config/internode/config.toml`.
 
 ## Output Format
 
@@ -184,18 +167,11 @@ A project always belongs to a team (`--team` is required on create).
 
 ### Parse output reliably
 
-From inside the container:
 ```bash
 result=$(internode topics list 2>/dev/null)
 if echo "$result" | jq -e '.ok' > /dev/null 2>&1; then
   echo "$result" | jq '.data'
 fi
-```
-
-From the host (agent scripting):
-```bash
-result=$(docker exec internode-cli internode topics list 2>/dev/null)
-echo "$result" | jq '.data'
 ```
 
 ### Entity detail returns knowledge molecules
