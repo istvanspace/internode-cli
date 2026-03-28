@@ -51,6 +51,17 @@ internode configure ink_your_api_key_here
 internode auth status
 ```
 
+## Permissions Model
+
+| Action | Allowed |
+|--------|---------|
+| Read / list all entities | Yes |
+| Update task properties | Yes |
+| Create projects | Yes |
+| Create other entities | No |
+| Update non-task entities | No |
+| Delete any entity | No |
+
 ## Usage
 
 All commands output structured JSON on stdout. Diagnostics go to stderr.
@@ -58,40 +69,62 @@ All commands output structured JSON on stdout. Diagnostics go to stderr.
 ### Topics
 
 ```bash
-internode topics list --limit 10
-internode topics get <id> --with-related
-internode topics create --title "My Topic"
-internode topics update <id> --title "New Title"
-internode topics delete <id>
+internode topics list
+internode topics list --search "authentication" --category 2 --limit 20
+```
+
+### Sub-topics
+
+```bash
+internode subtopics list
+internode subtopics list --type Idea --topic <topic_id>
+internode subtopics list --type Problem --limit 10
 ```
 
 ### Tasks
 
 ```bash
-internode tasks list --status open --team <team_id>
-internode tasks get <id> --with-related
-internode tasks create --title "My Task" --priority high
-internode tasks update <id> --priority medium
-internode tasks delete <id>
+internode tasks list
+internode tasks list --team <team_id> --status <status_id> --priority high
+internode tasks list --topic <topic_id> --intent <intent_id>
+internode tasks list --topic-category "Technology & Engineering"
+internode tasks update <id> --priority medium --assignee user@example.com
+internode tasks update <id> --team <team_id> --project <project_id>
+internode tasks update <id> --status <status_id> --due-date 2026-04-01
+internode tasks update <id> --user-notes "Blocked on review" --type action_item
 ```
 
 ### Decisions
 
 ```bash
-internode decisions get <id> --with-related
-internode decisions update <id> --title "Updated"
-internode decisions delete <id>
+internode decisions list
+internode decisions list --search "pricing model" --limit 10
+```
+
+### Intents
+
+```bash
+internode intents list
+internode intents list --limit 50
+```
+
+### Entity Details
+
+Retrieve full knowledge molecules (tasks, sub-topics, decisions) or property details (other entity types). Accepts up to 20 IDs.
+
+```bash
+internode entity get <id>
+internode entity get <id1> <id2> <id3>
 ```
 
 ### Teams / Projects / Statuses
 
 ```bash
 internode teams list
-internode teams create --name "Engineering"
 internode projects list --team <team_id>
 internode projects create --name "v2" --team <team_id>
+internode projects create --name "v2" --team <team_id> --key PRJ --description "Version 2"
 internode statuses list --team <team_id>
-internode statuses create --name "In Progress" --team <team_id>
 ```
 
 ### Search

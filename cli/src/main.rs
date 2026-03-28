@@ -35,37 +35,47 @@ enum Commands {
         #[command(subcommand)]
         command: AuthCmd,
     },
-    /// Manage OI topics
+    /// Browse OI topics
     Topics {
         #[command(subcommand)]
         command: TopicsCmd,
     },
-    /// Manage OI tasks
+    /// Browse OI sub-topics (Ideas, Problems, Solutions, etc.)
+    Subtopics {
+        #[command(subcommand)]
+        command: SubtopicsCmd,
+    },
+    /// Browse and update OI tasks
     Tasks {
         #[command(subcommand)]
         command: TasksCmd,
     },
-    /// Manage OI decisions
+    /// Browse OI decisions
     Decisions {
         #[command(subcommand)]
         command: DecisionsCmd,
     },
-    /// View OI entity details
+    /// Browse OI intents
     Intents {
         #[command(subcommand)]
         command: IntentsCmd,
     },
-    /// Manage OI teams
+    /// Retrieve detailed entity information (knowledge molecules)
+    Entity {
+        #[command(subcommand)]
+        command: EntityCmd,
+    },
+    /// Browse OI teams
     Teams {
         #[command(subcommand)]
         command: TeamsCmd,
     },
-    /// Manage OI projects
+    /// Browse and create OI projects
     Projects {
         #[command(subcommand)]
         command: ProjectsCmd,
     },
-    /// Manage OI statuses
+    /// Browse OI statuses
     Statuses {
         #[command(subcommand)]
         command: StatusesCmd,
@@ -81,8 +91,6 @@ enum Commands {
         #[arg(long = "min-score")]
         min_score: Option<f64>,
     },
-    /// Display teams and projects overview
-    Taxonomy,
     /// Dump structural OI context optimized for LLM consumption
     Context {
         /// Maximum token budget for context output
@@ -99,7 +107,7 @@ enum AuthCmd {
 
 #[derive(Subcommand)]
 enum TopicsCmd {
-    /// List topics
+    /// List topics with optional filters
     List {
         #[arg(long)]
         limit: Option<i64>,
@@ -107,36 +115,27 @@ enum TopicsCmd {
         offset: Option<i64>,
         #[arg(long)]
         search: Option<String>,
+        /// Filter by topic category index
+        #[arg(long)]
+        category: Option<i64>,
     },
-    /// Get a topic by ID
-    Get {
-        id: String,
-        #[arg(long = "with-related")]
-        with_related: bool,
+}
+
+#[derive(Subcommand)]
+enum SubtopicsCmd {
+    /// List sub-topics with optional filters
+    List {
+        /// Sub-topic type (Idea, Problem, Solution, Information, Outcome, etc.)
+        #[arg(long = "type")]
+        type_filter: Option<String>,
+        /// Filter by parent topic ID
+        #[arg(long)]
+        topic: Option<String>,
+        #[arg(long)]
+        limit: Option<i64>,
+        #[arg(long)]
+        offset: Option<i64>,
     },
-    /// Create a new topic
-    Create {
-        #[arg(long)]
-        title: String,
-        #[arg(long)]
-        description: Option<String>,
-        #[arg(long)]
-        conclusion: Option<String>,
-        #[arg(long = "conclusion-type")]
-        conclusion_type: Option<String>,
-    },
-    /// Update an existing topic
-    Update {
-        id: String,
-        #[arg(long)]
-        title: Option<String>,
-        #[arg(long)]
-        description: Option<String>,
-        #[arg(long)]
-        conclusion: Option<String>,
-    },
-    /// Archive a topic
-    Delete { id: String },
 }
 
 #[derive(Subcommand)]
@@ -155,39 +154,19 @@ enum TasksCmd {
         priority: Option<String>,
         #[arg(long)]
         search: Option<String>,
+        /// Filter by related topic ID
+        #[arg(long)]
+        topic: Option<String>,
+        /// Filter by related intent ID
+        #[arg(long)]
+        intent: Option<String>,
+        /// Filter by topic category
+        #[arg(long = "topic-category")]
+        topic_category: Option<String>,
         #[arg(long)]
         limit: Option<i64>,
         #[arg(long)]
         offset: Option<i64>,
-    },
-    /// Get a task by ID
-    Get {
-        id: String,
-        #[arg(long = "with-related")]
-        with_related: bool,
-    },
-    /// Create a new task
-    Create {
-        #[arg(long)]
-        title: String,
-        #[arg(long)]
-        description: Option<String>,
-        #[arg(long)]
-        priority: Option<String>,
-        #[arg(long)]
-        assignee: Option<String>,
-        #[arg(long = "due-date")]
-        due_date: Option<String>,
-        #[arg(long)]
-        team: Option<String>,
-        #[arg(long)]
-        project: Option<String>,
-        #[arg(long)]
-        status: Option<String>,
-        #[arg(long)]
-        decision: Option<String>,
-        #[arg(long = "type")]
-        task_type: Option<String>,
     },
     /// Update an existing task
     Update {
@@ -202,44 +181,55 @@ enum TasksCmd {
         assignee: Option<String>,
         #[arg(long = "due-date")]
         due_date: Option<String>,
+        /// Status ID to assign
         #[arg(long)]
         status: Option<String>,
+        /// Team ID to assign (auto-clears incompatible project/status/assignee)
+        #[arg(long)]
+        team: Option<String>,
+        /// Project ID to assign (must belong to task's team)
+        #[arg(long)]
+        project: Option<String>,
+        #[arg(long = "user-notes")]
+        user_notes: Option<String>,
+        #[arg(long = "blocked-by-reason")]
+        blocked_by_reason: Option<String>,
+        #[arg(long = "type")]
+        task_type: Option<String>,
     },
-    /// Archive a task
-    Delete { id: String },
 }
 
 #[derive(Subcommand)]
 enum DecisionsCmd {
-    /// Get a decision by ID
-    Get {
-        id: String,
-        #[arg(long = "with-related")]
-        with_related: bool,
+    /// List decisions with optional filters
+    List {
+        #[arg(long)]
+        search: Option<String>,
+        #[arg(long)]
+        limit: Option<i64>,
+        #[arg(long)]
+        offset: Option<i64>,
     },
-    /// Update an existing decision
-    Update {
-        id: String,
-        #[arg(long)]
-        title: Option<String>,
-        #[arg(long)]
-        description: Option<String>,
-        #[arg(long)]
-        status: Option<String>,
-        #[arg(long)]
-        priority: Option<String>,
-    },
-    /// Archive a decision
-    Delete { id: String },
 }
 
 #[derive(Subcommand)]
 enum IntentsCmd {
-    /// Get an entity by ID (returns detailed info with relations)
+    /// List intents
+    List {
+        #[arg(long)]
+        limit: Option<i64>,
+        #[arg(long)]
+        offset: Option<i64>,
+    },
+}
+
+#[derive(Subcommand)]
+enum EntityCmd {
+    /// Get detailed info for one or more entities (max 20)
     Get {
-        id: String,
-        #[arg(long = "with-related")]
-        with_related: bool,
+        /// Entity IDs to retrieve
+        #[arg(required = true, num_args = 1..=20)]
+        ids: Vec<String>,
     },
 }
 
@@ -247,34 +237,6 @@ enum IntentsCmd {
 enum TeamsCmd {
     /// List teams
     List,
-    /// Get a team by ID
-    Get { id: String },
-    /// Create a new team
-    Create {
-        #[arg(long)]
-        name: String,
-        #[arg(long)]
-        key: Option<String>,
-        #[arg(long)]
-        description: Option<String>,
-        /// Comma-separated email addresses
-        #[arg(long)]
-        members: Option<String>,
-    },
-    /// Update an existing team
-    Update {
-        id: String,
-        #[arg(long)]
-        name: Option<String>,
-        #[arg(long)]
-        key: Option<String>,
-        #[arg(long)]
-        description: Option<String>,
-        #[arg(long)]
-        members: Option<String>,
-    },
-    /// Archive a team
-    Delete { id: String },
 }
 
 #[derive(Subcommand)]
@@ -284,8 +246,6 @@ enum ProjectsCmd {
         #[arg(long)]
         team: Option<String>,
     },
-    /// Get a project by ID
-    Get { id: String },
     /// Create a new project
     Create {
         #[arg(long)]
@@ -298,18 +258,6 @@ enum ProjectsCmd {
         #[arg(long)]
         description: Option<String>,
     },
-    /// Update an existing project
-    Update {
-        id: String,
-        #[arg(long)]
-        name: Option<String>,
-        #[arg(long)]
-        key: Option<String>,
-        #[arg(long)]
-        description: Option<String>,
-    },
-    /// Archive a project
-    Delete { id: String },
 }
 
 #[derive(Subcommand)]
@@ -319,26 +267,6 @@ enum StatusesCmd {
         #[arg(long)]
         team: Option<String>,
     },
-    /// Create a new status
-    Create {
-        #[arg(long)]
-        name: String,
-        /// Team ID (required)
-        #[arg(long)]
-        team: String,
-        #[arg(long)]
-        description: Option<String>,
-    },
-    /// Update an existing status
-    Update {
-        id: String,
-        #[arg(long)]
-        name: Option<String>,
-        #[arg(long)]
-        description: Option<String>,
-    },
-    /// Archive a status
-    Delete { id: String },
 }
 
 async fn run(cli: Cli) -> Result<(), CliError> {
@@ -350,85 +278,61 @@ async fn run(cli: Cli) -> Result<(), CliError> {
             AuthCmd::Status => commands::auth::status().await,
         },
         Commands::Topics { command } => match command {
-            TopicsCmd::List { limit, offset, search } => {
-                commands::topics::list(limit, offset, search.as_deref()).await
+            TopicsCmd::List { limit, offset, search, category } => {
+                commands::topics::list(limit, offset, search.as_deref(), category).await
             }
-            TopicsCmd::Get { id, with_related } => {
-                commands::topics::get(&id, with_related).await
+        },
+        Commands::Subtopics { command } => match command {
+            SubtopicsCmd::List { type_filter, topic, limit, offset } => {
+                commands::subtopics::list(type_filter.as_deref(), topic.as_deref(), limit, offset).await
             }
-            TopicsCmd::Create { title, description, conclusion, conclusion_type } => {
-                commands::topics::create(&title, description.as_deref(), conclusion.as_deref(), conclusion_type.as_deref()).await
-            }
-            TopicsCmd::Update { id, title, description, conclusion } => {
-                commands::topics::update(&id, title.as_deref(), description.as_deref(), conclusion.as_deref()).await
-            }
-            TopicsCmd::Delete { id } => commands::topics::delete(&id).await,
         },
         Commands::Tasks { command } => match command {
-            TasksCmd::List { team, project, status, assignee, priority, search, limit, offset } => {
-                commands::tasks::list(team.as_deref(), project.as_deref(), status.as_deref(), assignee.as_deref(), priority.as_deref(), search.as_deref(), limit, offset).await
+            TasksCmd::List { team, project, status, assignee, priority, search, topic, intent, topic_category, limit, offset } => {
+                commands::tasks::list(
+                    team.as_deref(), project.as_deref(), status.as_deref(),
+                    assignee.as_deref(), priority.as_deref(), search.as_deref(),
+                    topic.as_deref(), intent.as_deref(), topic_category.as_deref(),
+                    limit, offset,
+                ).await
             }
-            TasksCmd::Get { id, with_related } => {
-                commands::tasks::get(&id, with_related).await
+            TasksCmd::Update { id, title, description, priority, assignee, due_date, status, team, project, user_notes, blocked_by_reason, task_type } => {
+                commands::tasks::update(
+                    &id, title.as_deref(), description.as_deref(), priority.as_deref(),
+                    assignee.as_deref(), due_date.as_deref(), status.as_deref(),
+                    team.as_deref(), project.as_deref(), user_notes.as_deref(),
+                    blocked_by_reason.as_deref(), task_type.as_deref(),
+                ).await
             }
-            TasksCmd::Create { title, description, priority, assignee, due_date, team, project, status, decision, task_type } => {
-                commands::tasks::create(&title, description.as_deref(), priority.as_deref(), assignee.as_deref(), due_date.as_deref(), team.as_deref(), project.as_deref(), status.as_deref(), decision.as_deref(), task_type.as_deref()).await
-            }
-            TasksCmd::Update { id, title, description, priority, assignee, due_date, status } => {
-                commands::tasks::update(&id, title.as_deref(), description.as_deref(), priority.as_deref(), assignee.as_deref(), due_date.as_deref(), status.as_deref()).await
-            }
-            TasksCmd::Delete { id } => commands::tasks::delete(&id).await,
         },
         Commands::Decisions { command } => match command {
-            DecisionsCmd::Get { id, with_related } => {
-                commands::decisions::get(&id, with_related).await
+            DecisionsCmd::List { search, limit, offset } => {
+                commands::decisions::list(search.as_deref(), limit, offset).await
             }
-            DecisionsCmd::Update { id, title, description, status, priority } => {
-                commands::decisions::update(&id, title.as_deref(), description.as_deref(), status.as_deref(), priority.as_deref()).await
-            }
-            DecisionsCmd::Delete { id } => commands::decisions::delete(&id).await,
         },
         Commands::Intents { command } => match command {
-            IntentsCmd::Get { id, with_related } => {
-                commands::intents::get(&id, with_related).await
+            IntentsCmd::List { limit, offset } => {
+                commands::intents::list(limit, offset).await
             }
+        },
+        Commands::Entity { command } => match command {
+            EntityCmd::Get { ids } => commands::entity::get(ids).await,
         },
         Commands::Teams { command } => match command {
             TeamsCmd::List => commands::teams::list().await,
-            TeamsCmd::Get { id } => commands::teams::get(&id).await,
-            TeamsCmd::Create { name, key, description, members } => {
-                commands::teams::create(&name, key.as_deref(), description.as_deref(), members.as_deref()).await
-            }
-            TeamsCmd::Update { id, name, key, description, members } => {
-                commands::teams::update(&id, name.as_deref(), key.as_deref(), description.as_deref(), members.as_deref()).await
-            }
-            TeamsCmd::Delete { id } => commands::teams::delete(&id).await,
         },
         Commands::Projects { command } => match command {
             ProjectsCmd::List { team } => commands::projects::list(team.as_deref()).await,
-            ProjectsCmd::Get { id } => commands::projects::get(&id).await,
             ProjectsCmd::Create { name, team, key, description } => {
                 commands::projects::create(&name, &team, key.as_deref(), description.as_deref()).await
             }
-            ProjectsCmd::Update { id, name, key, description } => {
-                commands::projects::update(&id, name.as_deref(), key.as_deref(), description.as_deref()).await
-            }
-            ProjectsCmd::Delete { id } => commands::projects::delete(&id).await,
         },
         Commands::Statuses { command } => match command {
             StatusesCmd::List { team } => commands::statuses::list(team.as_deref()).await,
-            StatusesCmd::Create { name, team, description } => {
-                commands::statuses::create(&name, &team, description.as_deref()).await
-            }
-            StatusesCmd::Update { id, name, description } => {
-                commands::statuses::update(&id, name.as_deref(), description.as_deref()).await
-            }
-            StatusesCmd::Delete { id } => commands::statuses::delete(&id).await,
         },
         Commands::Search { query, top_k, min_score } => {
             commands::search::search(&query, top_k, min_score).await
         }
-        Commands::Taxonomy => commands::taxonomy::taxonomy().await,
         Commands::Context { max_tokens } => {
             commands::context::context(max_tokens).await
         }

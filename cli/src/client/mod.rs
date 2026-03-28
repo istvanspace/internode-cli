@@ -59,17 +59,6 @@ impl ApiClient {
         Self::parse_response(resp).await
     }
 
-    pub async fn delete(&self, path: &str) -> Result<Value, CliError> {
-        let url = format!("{}{path}", self.api_url);
-        let resp = self
-            .http
-            .delete(&url)
-            .header("X-CLI-API-Key", &self.api_key)
-            .send()
-            .await?;
-        Self::parse_response(resp).await
-    }
-
     async fn parse_response(resp: reqwest::Response) -> Result<Value, CliError> {
         let status = resp.status();
         let body: Value = resp
