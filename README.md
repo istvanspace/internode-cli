@@ -16,6 +16,40 @@ cargo build --release
 # Binary: target/release/internode
 ```
 
+## Download `SKILL.md`
+
+If you want the agent skill file locally:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/istvanspace/internode-cli/main/SKILL.md -o SKILL.md
+```
+
+Install it directly into Cursor skills:
+
+```bash
+mkdir -p ~/.cursor/skills/use-internode-cli
+curl -fsSL https://raw.githubusercontent.com/istvanspace/internode-cli/main/SKILL.md -o ~/.cursor/skills/use-internode-cli/SKILL.md
+```
+
+Install it into Claude Code skills (personal scope):
+
+```bash
+mkdir -p ~/.claude/skills/use-internode-cli
+curl -fsSL https://raw.githubusercontent.com/istvanspace/internode-cli/main/SKILL.md -o ~/.claude/skills/use-internode-cli/SKILL.md
+```
+
+Install it into Codex skills:
+
+```bash
+# User scope (available in all repos)
+mkdir -p ~/.agents/skills/use-internode-cli
+curl -fsSL https://raw.githubusercontent.com/istvanspace/internode-cli/main/SKILL.md -o ~/.agents/skills/use-internode-cli/SKILL.md
+
+# Repo scope (available only in current repo)
+mkdir -p .agents/skills/use-internode-cli
+curl -fsSL https://raw.githubusercontent.com/istvanspace/internode-cli/main/SKILL.md -o .agents/skills/use-internode-cli/SKILL.md
+```
+
 ## Setup
 
 1. Log in to [app.internode.ai](https://app.internode.ai)
