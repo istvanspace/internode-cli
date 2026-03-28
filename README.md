@@ -23,7 +23,7 @@ User Machine                    Hosted Services
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/internodelabs/internode-cli/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/istvanspace/internode-cli/main/install.sh | sh
 ```
 
 Or build from source:
