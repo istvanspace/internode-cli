@@ -68,7 +68,7 @@ esac
 
 echo ""
 echo "Quick start:"
-echo "  1. Get an API key from Settings > CLI API Key at https://app.internode.work"
+echo "  1. Get an API key from Settings > CLI API Key at https://app.internode.ai"
 echo "  2. Run: ${BINARY} configure <your-api-key>"
 echo "  3. Verify: ${BINARY} auth status"
 echo ""

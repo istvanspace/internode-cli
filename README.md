@@ -7,7 +7,7 @@ Agent-native CLI for Internode Organizational Intelligence. Designed for AI agen
 ```
 User Machine                    Hosted Services
 ┌──────────┐    X-CLI-API-Key   ┌──────────────────────┐
-│ internode │ ────────────────── │ api.internode.work    │
+│ internode │ ────────────────── │ api.internode.ai    │
 │   CLI     │                   │ (agentops-api)        │
 └──────────┘                   │  └─ /internode-tools/  │
                                 │      cli/oi/*          │
@@ -17,7 +17,7 @@ User Machine                    Hosted Services
 ```
 
 - No gateway or proxy needed
-- CLI talks directly to `api.internode.work`
+- CLI talks directly to `api.internode.ai`
 - Per-user API key authentication (no shared secrets on client)
 
 ## Install
@@ -36,7 +36,7 @@ cargo build --release
 
 ## Setup
 
-1. Log in to [app.internode.work](https://app.internode.work)
+1. Log in to [app.internode.ai](https://app.internode.ai)
 2. Go to **Settings > CLI API Key**
 3. Click **Generate Key** and copy it
 4. Run:
@@ -111,7 +111,7 @@ internode context --max-tokens 4000
 Config file: `~/.config/internode/config.toml`
 
 ```toml
-api_url = "https://api.internode.work"
+api_url = "https://api.internode.ai"
 api_key = "ink_..."
 ```
 
