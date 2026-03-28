@@ -146,7 +146,7 @@ internode statuses list --team <team_id>
 ### Search
 
 ```bash
-internode search "authentication architecture" --top-k 10
+internode search "authentication architecture"
 ```
 
 ### Context (LLM-optimized)
