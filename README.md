@@ -2,24 +2,6 @@
 
 Agent-native CLI for Internode Organizational Intelligence. Designed for AI agents (Claude Code, Cursor, etc.) to use as long-term memory.
 
-## Architecture
-
-```
-User Machine                    Hosted Services
-┌──────────┐    X-CLI-API-Key   ┌──────────────────────┐
-│ internode │ ────────────────── │ api.internode.ai    │
-│   CLI     │                   │ (agentops-api)        │
-└──────────┘                   │  └─ /internode-tools/  │
-                                │      cli/oi/*          │
-                                │  └─ agents-postgres    │
-                                │  └─ Neo4j              │
-                                └──────────────────────┘
-```
-
-- No gateway or proxy needed
-- CLI talks directly to `agents.api.internode.ai`
-- Per-user API key authentication (no shared secrets on client)
-
 ## Install
 
 ```bash
